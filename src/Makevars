@@ -1,0 +1,17 @@
+CLDDIR = ./cld
+CLDLIB = -lcldlib
+PKG_CXXFLAGS=-fPIC -O2 -DCLD_WINDOWS -Wall -pedantic
+
+PKG_CPPFLAGS = -DNDEBUG -I$(CLDDIR) -I.
+PKG_LIBS = -L$(CLDDIR) $(CLDLIB) $(LIBM) -lstdc++ 
+
+all: cld $(SHLIB)
+
+cld:
+	(cd $(CLDDIR) && $(MAKE) -f cldlib.mk)
+
+clean:
+	@rm -f *.o
+	(cd $(CLDDIR) && @rm -f *.o)
+
+.PHONY: cld all
