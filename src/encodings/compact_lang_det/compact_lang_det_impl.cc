@@ -6,7 +6,7 @@
 #include <string.h>
 //#include <sys/time.h>                               // for gettimeofday
 #include <string>
-
+#include <R.h>
 #include "encodings/lang_enc.h"
 
 #include "encodings/compact_lang_det/compact_lang_det.h"
@@ -31,14 +31,14 @@ extern const cld::CLDTableSummary kCjkBiTable_obj;
 extern const cld::CLDTableSummary kQuadTable_obj;
 extern const cld::CLDTableSummary kLongWord8Table_obj;
 
-DEFINE_bool(cld_html, false, "Print language spans in HTML on stderr");
-DEFINE_bool(cld_forcewords, false, "Score all words, in addition to quads");
+DEFINE_bool(cld_html, false, "Print language spans in HTML on stderror")
+DEFINE_bool(cld_forcewords, false, "Score all words, in addition to quads")
 
-DEFINE_bool(cld_showme, false, "Put squeeze/repeat points into HTML text");
-DEFINE_bool(cld_echotext, false, "Print each scriptspan to stderr");
-DEFINE_int32(cld_textlimit, 160, "Examine only initial n KB of actual text");
+DEFINE_bool(cld_showme, false, "Put squeeze/repeat points into HTML text")
+DEFINE_bool(cld_echotext, false, "Print each scriptspan to stderror")
+DEFINE_int32(cld_textlimit, 160, "Examine only initial n KB of actual text")
 // 20 quadgrams is about 80 bytes or about 12 words in real text
-DEFINE_int32(cld_smoothwidth, 20, "Smoothing window width in quadgrams");
+DEFINE_int32(cld_smoothwidth, 20, "Smoothing window width in quadgrams")
 
 
 static const int kLangHintInitial = 12;  // Boost language by N initially
@@ -1102,7 +1102,7 @@ void RemoveExtendedLanguages(ToteWithReliability* doc_tote) {
     if (cld::UnpackLanguage(doc_tote->Key(sub)) >= NUM_LANGUAGES) {
       // Effectively remove the extended language by setting key&score to zero
       if (FLAGS_dbgscore) {
-        fprintf(stderr, "{-%s} ",
+          REprintf("{-%s} ",
                 ExtLanguageCode(cld::UnpackLanguage(doc_tote->Key(sub))));
       }
 
@@ -1189,11 +1189,14 @@ void RemoveUnreliableLanguages(ToteWithReliability* doc_tote, bool do_remove_wea
     // Show fate of unreliable languages if at least 10 bytes
     if (FLAGS_cld_html /*&& (newpercent >= 10)*/ && (newbytes >= 10)) {
       if (into_lang) {
-        fprintf(stderr, "{Unreli %s.%d(%dB) => %s} ",
+        REprintf( "{Unreli %s.%d(%dB) => %s} ",
+                ExtLanguageCode(altlang), reliable_percent2, bytes2,
+                ExtLanguageCode(lang));
+        REprintf("{Unreli %s.%d(%dB) => %s} ",
                 ExtLanguageCode(altlang), reliable_percent2, bytes2,
                 ExtLanguageCode(lang));
       } else {
-        fprintf(stderr, "{Unreli %s.%d(%dB) => %s} ",
+        REprintf( "{Unreli %s.%d(%dB) => %s} ",
                 ExtLanguageCode(lang), reliable_percent, bytes,
                 ExtLanguageCode(altlang));
       }
@@ -1230,13 +1233,13 @@ void RemoveUnreliableLanguages(ToteWithReliability* doc_tote, bool do_remove_wea
 
       // Show fate of unreliable languages if at least 10 bytes
       if (FLAGS_cld_html /*&& (reliable_percent >= 10)*/ && (bytes >= 10)) {
-        fprintf(stderr, "{Unreli %s.%d(%dB)} ",
+        REprintf( "{Unreli %s.%d(%dB)} ",
                 ExtLanguageCode(lang), reliable_percent, bytes);
       }
     }
   }
 
-  if (FLAGS_cld_html) {fprintf(stderr, "<br>\n");}
+  if (FLAGS_cld_html) {REprintf( "<br>\n");}
 }
 
 
@@ -1277,7 +1280,7 @@ void RefineScoredClosePairs(ToteWithReliability* doc_tote) {
           int val = doc_tote->Value(from_sub);
           int reli = doc_tote->Reliability(from_sub);
           int reliable_percent = reli / (val ? val : 1);  // avoid zdiv
-          fprintf(stderr, "{CloseLangPair: %s.%d%%(%dB) => %s} ",
+          REprintf( "{CloseLangPair: %s.%d%%(%dB) => %s} ",
                   ExtLanguageCode(from_lang),
                   reliable_percent,
                   doc_tote->Value(from_sub),
@@ -1312,7 +1315,7 @@ void ApplyLanguageHints(Tote* chunk_tote, int tote_grams,
       ((lang_hint_boost[lang_sub] * tote_grams) >> 3);
     chunk_tote->SetValue(sub, new_value);
     if (FLAGS_dbgscore && (lang_hint_boost[lang_sub] > 0)) {
-      fprintf(stderr, "[%s+=%d*%d/8] ",
+      REprintf( "[%s+=%d*%d/8] ",
               ExtLanguageCode(cld::UnpackLanguage(lang_sub)),
               lang_hint_boost[lang_sub], tote_grams);
     }
@@ -1391,9 +1394,9 @@ void ScoreChunkIntoDoc(const char* src, int srclen, int advance_by,
   // TEMP
   if (FLAGS_cld_html) {
     if (reliability >= kMinReliableKeepPercent) {
-      fprintf(stderr, "R%d%% ", reliability);
+      REprintf( "R%d%% ", reliability);
     } else {
-      fprintf(stderr, "--R%d%% ", reliability);
+      REprintf( "--R%d%% ", reliability);
     }
   }
 #endif
@@ -1413,7 +1416,7 @@ void ScoreChunkIntoDoc(const char* src, int srclen, int advance_by,
     doc_tote->Add(chunk_tote->Key(1),
                   second_len, chunk_tote->Value(1), reliability);
     if (FLAGS_dbgscore) {
-      fprintf(stderr, "{+%s.%d.%dR(%dB) +%s.%d.%dR(%dB)} ",
+      REprintf( "{+%s.%d.%dR(%dB) +%s.%d.%dR(%dB)} ",
               ExtLanguageCode(cld::UnpackLanguage(chunk_tote->Key(0))),
               chunk_tote->Value(0),
               reliability,
@@ -1428,7 +1431,7 @@ void ScoreChunkIntoDoc(const char* src, int srclen, int advance_by,
     doc_tote->Add(chunk_tote->Key(0),
                   len, chunk_tote->Value(0), reliability);
     if (FLAGS_dbgscore) {
-      fprintf(stderr, "{+%s.%d.%dR(%dB)} ",
+      REprintf( "{+%s.%d.%dR(%dB)} ",
               ExtLanguageCode(cld::UnpackLanguage(chunk_tote->Key(0))),
               chunk_tote->Value(0),
               reliability,
@@ -1438,9 +1441,9 @@ void ScoreChunkIntoDoc(const char* src, int srclen, int advance_by,
 
   if (FLAGS_cld_html) {
     if (cur_lang < 0) {cur_lang = UNKNOWN_LANGUAGE;}
-    cld::PrintLang(stderr, chunk_tote,
+    /*cld::PrintLang(stderr, chunk_tote,
               cur_lang, cur_unreliable,
-              prior_lang, prior_unreliable);
+              prior_lang, prior_unreliable);*/
     prior_lang = cur_lang;
     prior_unreliable = cur_unreliable;
 
@@ -1451,7 +1454,7 @@ void ScoreChunkIntoDoc(const char* src, int srclen, int advance_by,
       temp.append(UnicodeLScriptCode(lscript));
       temp.append("=");
     }
-    cld::PrintText(stderr, cur_lang, temp);
+    //cld::PrintText(stderr, cur_lang, temp);
   }
 
   chunk_tote->Reinit();
@@ -1460,22 +1463,22 @@ void ScoreChunkIntoDoc(const char* src, int srclen, int advance_by,
 
 void PrintTopLang(Language top_lang) {
   if ((top_lang == prior_lang) && (top_lang != UNKNOWN_LANGUAGE)) {
-    fprintf(stderr, "[] ");
+    REprintf( "[] ");
   } else {
-    fprintf(stderr, "[%s] ", ExtLanguageName(top_lang));
+    REprintf( "[%s] ", ExtLanguageName(top_lang));
     prior_lang = top_lang;
   }
 }
 
 void PrintTopLangSpeculative(Language top_lang) {
-  fprintf(stderr, "<span style=\"color:#%06X;\">", 0xa0a0a0);
+  REprintf( "<span style=\"color:#%06X;\">", 0xa0a0a0);
   if ((top_lang == prior_lang) && (top_lang != UNKNOWN_LANGUAGE)) {
-    fprintf(stderr, "[] ");
+    REprintf( "[] ");
   } else {
-    fprintf(stderr, "[%s] ", ExtLanguageName(top_lang));
+    REprintf( "[%s] ", ExtLanguageName(top_lang));
     prior_lang = top_lang;
   }
-  fprintf(stderr, "</span>\n");
+  REprintf( "</span>\n");
 }
 
 
@@ -1566,7 +1569,7 @@ static void ScoreUnigrams(const UTF8PropObj* unigram_obj,
         string temp(src, len);
         Language top_lang = cld::UnpackLanguage(chunk_tote->CurrentTopKey());
         PrintTopLangSpeculative(top_lang);
-        cld::PrintText(stderr, top_lang, temp);
+       // cld::PrintText(stderr, top_lang, temp);
       }
     }
     src += len;
@@ -1634,7 +1637,7 @@ static void ScoreQuadgrams(const cld::CLDTableSummary* quadgram_obj,
         string temp(src, len);
         Language top_lang = cld::UnpackLanguage(chunk_tote->CurrentTopKey());
         PrintTopLangSpeculative(top_lang);
-        cld::PrintText(stderr, top_lang, temp);
+       // cld::PrintText(stderr, top_lang, temp);
       }
     }
     src += len;
@@ -1671,12 +1674,12 @@ void InitScriptToteLang(Tote* script_tote, UnicodeLScript lscript) {
   script_tote->AddBytes(1);
 #if 0
   if (FLAGS_cld_html) {
-    cld::PrintLang(stderr, script_tote,
+   /* cld::PrintLang(stderr, script_tote,
               defaultlang, false,
-              UNKNOWN_LANGUAGE, false);
+              UNKNOWN_LANGUAGE, false);*/
     prior_lang = cur_lang;
     string temp("+1");
-    cld::PrintText(stderr, defaultlang, temp);
+   // cld::PrintText(stderr, defaultlang, temp);
   }
 #endif
 }
@@ -1777,7 +1780,7 @@ static int HintBinaryLookup4(const HintEntry* hintprobs, int hintprobssize,
 // Increment the initial probabilities based on a per-TLD probs entry
 void ApplyTLDHint(uint8* lang_hint_boost, const char* tld_hint) {
   if (FLAGS_dbgscore) {
-    fprintf(stderr, "TLD hint %s\n", tld_hint);
+    REprintf( "TLD hint %s\n", tld_hint);
   }
   char normalized_tld[8];
   MakeChar4(tld_hint, normalized_tld);
@@ -1803,7 +1806,7 @@ void ApplyTLDHint(uint8* lang_hint_boost, const char* tld_hint) {
 void ApplyEncodingHint(uint8* lang_hint_boost, int encoding_hint) {
   if (FLAGS_dbgscore) {
     Encoding tempenc = static_cast<Encoding>(encoding_hint);
-    fprintf(stderr, "ENC hint %s\n", EncodingName(tempenc));
+    REprintf( "ENC hint %s\n", EncodingName(tempenc));
   }
   if (encoding_hint < ISO_8859_1) {return;}
   if (encoding_hint >= NUM_ENCODINGS) {return;}
@@ -1824,7 +1827,7 @@ void ApplyEncodingHint(uint8* lang_hint_boost, int encoding_hint) {
 // Does not recognize extended languages as hints
 void ApplyLanguageHint(uint8* lang_hint_boost, Language language_hint) {
   if (FLAGS_dbgscore) {
-    fprintf(stderr, "LANG hint %s\n", ExtLanguageName(language_hint));
+    REprintf( "LANG hint %s\n", ExtLanguageName(language_hint));
   }
   if (language_hint < ENGLISH) {return;}
   if (language_hint >= NUM_LANGUAGES) {return;}
@@ -2204,7 +2207,7 @@ Language CompactLangDetImpl::DetectLanguageSummaryV25(
 
     // Echo text if asked to
     if (FLAGS_cld_echotext) {
-      PrintHtmlEscapedText(stderr, scriptspan.text, scriptspan.text_bytes);
+      //PrintHtmlEscapedText(stderr, scriptspan.text, scriptspan.text_bytes);
     }
 
     // Squeeze out big chunks of text span if asked to
@@ -2225,7 +2228,7 @@ Language CompactLangDetImpl::DetectLanguageSummaryV25(
                                     kCheapSqueezeTestLen)) {
         // Recursive call with big-chunk squeezing set
         if (FLAGS_cld_html || FLAGS_dbgscore) {
-          fprintf(stderr,
+          REprintf(
                   "<br>---text_bytes[%d] Recursive(Squeeze)---<br><br>\n",
                   total_text_bytes);
         }
@@ -2336,7 +2339,7 @@ Language CompactLangDetImpl::DetectLanguageSummaryV25(
       if (total_text_bytes > textlimit) {
         // Don't look at rest of doc
         if (FLAGS_cld_html || FLAGS_dbgscore) {
-          fprintf(stderr, "<br>---text_bytes[%d] textlimit %d reached---<br>",
+          REprintf( "<br>---text_bytes[%d] textlimit %d reached---<br>",
                   total_text_bytes, textlimit);
         }
         break;
@@ -2345,7 +2348,7 @@ Language CompactLangDetImpl::DetectLanguageSummaryV25(
       advance_limit <<= 1;      // Double limit until next change
       spantooshortlimit <<= 1;  // Double short-span size
       if (FLAGS_cld_html || FLAGS_dbgscore) {
-        fprintf(stderr, "<br>---text_bytes[%d] advance_by doubled to %d---<br>",
+        REprintf( "<br>---text_bytes[%d] advance_by doubled to %d---<br>",
                 total_text_bytes, advance_by);
       }
     }
@@ -2453,24 +2456,24 @@ Language CompactLangDetImpl::DetectLanguageSummaryV25(
       uint8 subseq[kMaxSubsetSeq];
       doc_tote.ExtractSeq(kMaxSubsetSeq, subseq);
 
-      fprintf(stderr, "<br>\nSubset Sequence[%d]: ", kMaxSubsetSeq);
+      REprintf( "<br>\nSubset Sequence[%d]: ", kMaxSubsetSeq);
       for (int i = 0; i < kMaxSubsetSeq; ++i) {
-        fprintf(stderr, "%s ", ExtLanguageCode(cld::UnpackLanguage(subseq[i])));
-        if ((i % 4) == 3) {fprintf(stderr, "&nbsp; ");}
+        REprintf( "%s ", ExtLanguageCode(cld::UnpackLanguage(subseq[i])));
+        if ((i % 4) == 3) {REprintf( "&nbsp; ");}
       }
-      fprintf(stderr, "&nbsp;&nbsp; ");
+      REprintf( "&nbsp;&nbsp; ");
 
       for (int i = 0; i < 3; ++i) {
         if (language3[i] != UNKNOWN_LANGUAGE) {
-          fprintf(stderr, "%s.%d(%d%%) ",
+          REprintf( "%s.%d(%d%%) ",
                   ExtLanguageCode(language3[i]),
                   reliable_percent3[i],
                   percent3[i]);
         }
       }
 
-      fprintf(stderr, "%d B ", total_text_bytes);
-      fprintf(stderr, "<br>\n");
+      REprintf( "%d B ", total_text_bytes);
+      REprintf( "<br>\n");
     }
     // End Scaffolding to reveal subset sequence lang distribution
 #endif
@@ -2487,17 +2490,17 @@ Language CompactLangDetImpl::DetectLanguageSummaryV25(
     if (FLAGS_cld_html) {
       for (int i = 0; i < 3; ++i) {
         if (language3[i] != UNKNOWN_LANGUAGE) {
-          fprintf(stderr, "%s.%d(%d%%) ",
+          REprintf( "%s.%d(%d%%) ",
                   ExtLanguageCode(language3[i]),
                   reliable_percent3[i],
                   percent3[i]);
         }
       }
 
-      fprintf(stderr, "%d B ", total_text_bytes);
-      fprintf(stderr, "= %s%c ",
+      REprintf( "%d B ", total_text_bytes);
+      REprintf( "= %s%c ",
               ExtLanguageName(summary_lang), is_reliable ? ' ' : '*');
-      fprintf(stderr, "<br>\n");
+      REprintf( "<br>\n");
     }
 
     return summary_lang;
@@ -2506,7 +2509,7 @@ Language CompactLangDetImpl::DetectLanguageSummaryV25(
   // Not a good answer -- do recursive call to refine
   if (FLAGS_cld_html || FLAGS_dbgscore) {
     // This is what we hope to improve on in the recursive call, if any
-    PrintLangs(stderr, language3, percent3, text_bytes, is_reliable);
+   // PrintLangs(stderr, language3, percent3, text_bytes, is_reliable);
   }
 
   // For restriction to Top40 + one, the one is 1st/2nd lang that is not Top40
@@ -2521,7 +2524,7 @@ Language CompactLangDetImpl::DetectLanguageSummaryV25(
   if (total_text_bytes < kShortTextThresh) {
       // Short text: Recursive call with top40 and short set
       if (FLAGS_cld_html || FLAGS_dbgscore) {
-        fprintf(stderr, "&nbsp;&nbsp;---text_bytes[%d] "
+        REprintf( "&nbsp;&nbsp;---text_bytes[%d] "
                 "Recursive(Top40/Rep/Short/Words)---<br><br>\n",
                 total_text_bytes);
       }
@@ -2548,7 +2551,7 @@ Language CompactLangDetImpl::DetectLanguageSummaryV25(
 
   // Longer text: Recursive call with top40 set
   if (FLAGS_cld_html || FLAGS_dbgscore) {
-    fprintf(stderr,
+    REprintf(
             "&nbsp;&nbsp;---text_bytes[%d] Recursive(Top40/Rep)---<br><br>\n",
             total_text_bytes);
   }

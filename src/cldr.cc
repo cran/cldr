@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include "cld/encodings/compact_lang_det/compact_lang_det.h"
-#include "cld/encodings/compact_lang_det/ext_lang_enc.h"
-#include "cld/encodings/compact_lang_det/unittest_data.h"
-#include "cld/encodings/proto/encodings.pb.h"
+#include "encodings/compact_lang_det/compact_lang_det.h"
+#include "encodings/compact_lang_det/ext_lang_enc.h"
+#include "encodings/compact_lang_det/unittest_data.h"
+#include "encodings/proto/encodings.pb.h"
 #include <R.h>
 #include <Rdefines.h>
  

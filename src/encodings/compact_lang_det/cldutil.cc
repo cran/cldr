@@ -12,7 +12,7 @@
 #include "encodings/compact_lang_det/win/cld_unilib.h"
 #include "encodings/compact_lang_det/win/cld_utf.h"
 #include "encodings/compact_lang_det/win/cld_utf8statetable.h"
-
+#include <R.h>
 // Runtime routines for hashing, looking up, and scoring
 // unigrams (CJK), bigrams (CJK), quadgrams, and octagrams.
 // Unigrams and bigrams are for CJK languages only, including simplified/
@@ -510,7 +510,7 @@ int cld::DoBigramScoreV3(const cld::CLDTableSummary* bigram_obj,
   const uint8* usrc = reinterpret_cast<const uint8*>(src);
   const uint8* usrclimit1 = usrc + srclen - UTFmax;
   if (FLAGS_dbgscore) {
-    fprintf(stderr, "  " );
+    REprintf( "  " );
   }
 
   while (usrc < usrclimit1) {
@@ -535,7 +535,7 @@ int cld::DoBigramScoreV3(const cld::CLDTableSummary* bigram_obj,
         const char* ssrc = reinterpret_cast<const char*>(usrc);
         DbgScoreRecord(NULL, probs, len2);
         string temp(ssrc, len2);
-        fprintf(stderr, "%s ", temp.c_str());
+        REprintf( "%s ", temp.c_str());
       }
 
       if (probs != 0) {
@@ -547,7 +547,7 @@ int cld::DoBigramScoreV3(const cld::CLDTableSummary* bigram_obj,
   }
 
   if (FLAGS_dbgscore) {
-    fprintf(stderr, "[%d bigrams scored]\n", hit_count);
+    REprintf( "[%d bigrams scored]\n", hit_count);
     DbgScoreState();
   }
   return hit_count;
@@ -689,7 +689,7 @@ int cld::DoOctaScoreV3(const cld::CLDTableSummary* octagram_obj,
   const char* word_ptr = src;
   const char* word_end = word_ptr;
   if (FLAGS_dbgscore) {
-    fprintf(stderr, "  " );
+    REprintf( "  " );
   }
   while (src < srclimit) {
     // Terminate previous word or continue current word
@@ -715,7 +715,7 @@ int cld::DoOctaScoreV3(const cld::CLDTableSummary* octagram_obj,
       } else if (FLAGS_dbgscore && (probs != 0)) {
         DbgScoreRecord(NULL, probs, bytecount);
         string temp(word_ptr, bytecount);
-        fprintf(stderr, "%s ", temp.c_str());
+        REprintf( "%s ", temp.c_str());
       }
 
       if (probs != 0) {
@@ -737,7 +737,7 @@ int cld::DoOctaScoreV3(const cld::CLDTableSummary* octagram_obj,
   }
 
   if (FLAGS_dbgscore) {
-    fprintf(stderr, "[%d words scored]\n", hit_count);
+    REprintf( "[%d words scored]\n", hit_count);
     DbgScoreState();
   }
   return hit_count;
@@ -869,7 +869,7 @@ int cld::GetReliability(int len, UnicodeLScript lscript,
     cld::DbgLangName3(UnpackLanguage(chunk_tote->Key(1)), temp2);
     if (temp2[2] == ' ') {temp2[2] = '\0';}
     int srclen = len;
-    fprintf(stderr, "CALC GetReliability gram=%d incr=%d srclen=%d,  %s=%d %s=%d "
+    REprintf( "CALC GetReliability gram=%d incr=%d srclen=%d,  %s=%d %s=%d "
                    "top/KB=%d mean/KB=%d del=%d%% reli=%d%%   "
                    "lang/lscript %d %d\n",
            chunk_tote->GetGramCount(),

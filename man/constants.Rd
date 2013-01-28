@@ -1,5 +1,5 @@
 \name{constants}
-\Rdversion{1.1}
+\Rdversion{1.0.1}
 \alias{Languages}
 \alias{ExtendedLanguages}
 \alias{Encodings}

@@ -1,5 +1,5 @@
 \name{medSTC-package}
-\Rdversion{1.0}
+\Rdversion{1.0.1}
 \alias{cldr-package}
 \docType{package}
 \title{
@@ -15,9 +15,9 @@
 \tabular{ll}{
 Package: \tab cldr\cr
 Type: \tab Package\cr
-Version: \tab 1.0.0\cr
+Version: \tab 1.0.1\cr
 Date: \tab 2013-1-25\cr
-License: \tab BSD\cr
+License: \tab BSD \cr
 LazyLoad: \tab yes\cr
 }
 }

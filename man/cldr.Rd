@@ -1,6 +1,6 @@
 \name{detectLanguage}
 \alias{detectLanguage}
-\Rdversion{1.0}
+\Rdversion{1.0.1}
 
 \title{
 Compact Language Detector (CLD) 
