@@ -17,10 +17,10 @@ SEXP RDetectLanguage(SEXP src_,
 		  SEXP language_hint_
 		  ){
 			int srcSize = (INTEGER(GET_DIM(src_))[0]);
-			bool is_plain_text = LOGICAL(is_plain_text_); 
-    		bool do_allow_extended_languages = LOGICAL(do_allow_extended_languages_);
-    		bool do_pick_summary_language = LOGICAL(do_pick_summary_language_);
-    		bool do_remove_weak_matches = LOGICAL(do_remove_weak_matches_);
+			bool is_plain_text = LOGICAL(is_plain_text_)[0]; 
+    		bool do_allow_extended_languages = LOGICAL(do_allow_extended_languages_)[0];
+    		bool do_pick_summary_language = LOGICAL(do_pick_summary_language_)[0];
+    		bool do_remove_weak_matches = LOGICAL(do_remove_weak_matches_)[0];
     		bool is_reliable;
     		Language plus_one = UNKNOWN_LANGUAGE;
     		const char* tld_hint;

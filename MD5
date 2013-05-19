@@ -1,12 +1,12 @@
-8741aff2f1dc3552f772390a04402b9c *DESCRIPTION
-b90b93c095f413dbc9f3745570838ad2 *LICENCE
+9dd9807d310336b359996217df840fc1 *DESCRIPTION
+25c5402f259e3b224f6d7e4adabe8781 *LICENCE
 f2fcdd0b914c1cdd3f48b1f23a0a6fdb *NAMESPACE
 9afd76210ead85acc92ff5e532280d86 *R/cldr.r
 9800e0ce8665ec674a79bf95e81de7ec *demo/00Index
 376441cb031e42f2c193e1710eebc446 *demo/cldr.R
-614a95f5ca4c90013966b325ae006f11 *man/cldr-package.Rd
-cef2e1dca56c09d1246782b17c7ca8a7 *man/cldr.Rd
-b212af7872f71549728a830e29d34ba8 *man/constants.Rd
+d8b14fcd1f1a99080640801f795e297b *man/cldr-package.Rd
+529e274b74a5870c58ad4970204bceb8 *man/cldr.Rd
+60974ca658adf84701ba67305953fa2c *man/constants.Rd
 1f6a558fd4848643742f99939e6d2044 *src/Makevars
 08a22c59e9db3285900f1852cd5f07cc *src/base/basictypes.h
 3d3ff89a593d5f627fcbe42c9d167107 *src/base/build_config.h
@@ -27,7 +27,7 @@ dd165640075310f1a003cbcf8685d967 *src/base/stl_decl_msvc.h
 c7460341aca40a9cf6e3e23661e18e84 *src/base/template_util.h
 58a59fd5146d77df6cd2126eb53899ee *src/base/type_traits.h
 15b601e7dd38962cae93094a43f702f1 *src/base/vlog_is_on.h
-4204da0ab441e39b1bfe1c4eb7033358 *src/cldr.cc
+455bbabde42130a1e5d24024c02a481e *src/cldr.cc
 4c680331bdc01f3369b3cad318f003f7 *src/encodings/compact_lang_det/cldutil.cc
 a856fc0add05df185c74704d169692bc *src/encodings/compact_lang_det/cldutil.h
 fc274a5d7d32a3416cb29995ed848e43 *src/encodings/compact_lang_det/cldutil_dbg.h
